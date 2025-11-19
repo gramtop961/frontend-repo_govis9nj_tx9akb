@@ -2,9 +2,10 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { Link } from 'react-router-dom'
 
-function PriceCard({title,price,subtitle,features,cta, note}){
+function PriceCard({title,price,subtitle,features,cta, note, badge}){
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-6 flex flex-col">
+    <div className="relative rounded-2xl border border-white/10 bg-slate-900/60 p-6 flex flex-col">
+      {badge && <div className="absolute -top-3 right-4 text-xs px-2 py-1 rounded-full bg-emerald-500 text-white">{badge}</div>}
       <h3 className="text-white text-xl font-semibold">{title}</h3>
       <div className="mt-2 text-3xl font-bold text-white">{price}</div>
       {subtitle && <div className="text-slate-300 text-sm">{subtitle}</div>}
@@ -33,11 +34,13 @@ export default function Preise(){
             title="Starter Omnichannel Agent"
             price="149 €/Monat (Direktkauf) / 179 € mit Demo"
             subtitle="1 Agent, Standard-Setup inkl."
+            badge="Beliebt"
             features={[
               'Voice + Chat-Widget',
               'Anpassung anhand Website + Onboarding-Formular',
               'Basis-Dialog (z.B. Terminbuchung oder After-Hours)',
               'E-Mail-Benachrichtigungen über neue Leads/Termine',
+              'Kündbar monatlich'
             ]}
           />
 
@@ -63,7 +66,8 @@ export default function Preise(){
               '4+ Agenten',
               'CRM/ERP-Integrationen nach Aufwand',
               'Priorisierter Support & SLA',
-              'Individuelles Reporting'
+              'Individuelles Reporting',
+              'Implementierung ab 1.500 €'
             ]}
             note="Einmalige Implementierung nach Aufwand (z.B. ab 1.500 €). Nur via Demo & Beratung."
           />
@@ -71,6 +75,24 @@ export default function Preise(){
 
         <div className="mt-10 rounded-xl border border-yellow-400/30 bg-yellow-400/10 p-4 text-yellow-200 text-sm">
           Hinweis: Externe Telefonie- und Sprachkosten (z.B. Twilio, ElevenLabs) fallen zusätzlich an und werden direkt von diesen Anbietern berechnet. VoiceForge ist nicht Zahlungsanbieter dieser Dienste – wir unterstützen lediglich bei der Einrichtung.
+        </div>
+
+        <div className="mt-12 rounded-2xl border border-white/10 bg-slate-900/60 p-6">
+          <h2 className="text-white text-2xl font-semibold">Welche Pakete passen zu welchem Gewerk?</h2>
+          <div className="grid gap-4 md:grid-cols-3 mt-4 text-sm text-slate-300">
+            <div>
+              <div className="text-white font-medium">Sanitär/Klempner</div>
+              <p>Starter reicht oft zum Start (Termin + Notfallannahme). Pro sinnvoll bei Reminder + Hotline.</p>
+            </div>
+            <div>
+              <div className="text-white font-medium">Elektriker</div>
+              <p>Pro (2–3 Agenten) für Beratung/Termin + After-Hours. Enterprise bei CRM/ERP-Anbindung.</p>
+            </div>
+            <div>
+              <div className="text-white font-medium">HKLS</div>
+              <p>Starter für Wartungstermine, Pro für Notfall/Reminder-Kombi. Enterprise bei Bereitschaftsplänen.</p>
+            </div>
+          </div>
         </div>
       </main>
       <Footer/>
