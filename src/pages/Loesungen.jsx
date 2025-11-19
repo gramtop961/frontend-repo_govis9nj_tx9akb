@@ -131,6 +131,10 @@ export default function Loesungen(){
     }
   ]
 
+  const weitere = [
+    'Garten- & Landschaftsbau','Fensterbau','Tischler/Schreiner','Gebäudereinigung','Trockenbau','Fliesenleger','Maurer','Schlosser/Metallbau','Bodenleger','Zimmerei','Solaranlagen/Photovoltaik','Rollladen & Sonnenschutz','Kälte-/Klimatechnik','Brandschutz','IT-/Systemhaus (B2B-Field-Service)','Hausverwaltung/Facility','Umzugsservice','Haustechnik','Security/Schließdienst','Küchenbau','Badmodernisierung','Entrümpelung','Rohrreinigung','Baumpflege','Güter-/Kurierlogistik'
+  ]
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200">
       <Navbar/>
@@ -145,6 +149,14 @@ export default function Loesungen(){
         <p className="mt-2 text-slate-300 max-w-3xl">Für jedes Gewerk liefern wir branchenspezifische Prompts, Dialoge und Formulierungen. So klingt Ihr Agent wie ein Profi aus Ihrem Fach.</p>
         <div className="mt-6 grid gap-6">
           {gewerke.map(g=> <GewerkeBlock key={g.title} {...g} />)}
+        </div>
+
+        <h2 className="mt-14 text-2xl md:text-3xl font-semibold text-white">Weitere Gewerke</h2>
+        <p className="mt-2 text-slate-300 max-w-3xl">Wir unterstützen praktisch alle handwerksnahen Dienstleistungen. Finden Sie Ihr Gewerk in der Liste – oder sprechen Sie uns an.</p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {weitere.map(w => (
+            <span key={w} className="px-3 py-1 rounded-full border border-cyan-400/30 text-cyan-200 text-xs bg-cyan-400/10">{w}</span>
+          ))}
         </div>
       </main>
       <Footer/>

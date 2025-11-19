@@ -2,12 +2,37 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { useState } from 'react'
 
-export default function Onboarding(){
-  const [form, setForm] = useState({company:'', url:'', hours:'', jobs:'', questions:'', emergency:''})
+const BACKEND = import.meta.env.VITE_BACKEND_URL || ''
 
-  function onSubmit(e){
+export default function Onboarding(){
+  const [form, setForm] = useState({company:'', url:'', hours:'', jobs:'', questions:'', emergency:'', contact_email:''})
+  const [submitting, setSubmitting] = useState(false)
+
+  async function onSubmit(e){
     e.preventDefault()
-    alert('Danke! Onboarding-Daten gespeichert (Platzhalter).')
+    setSubmitting(true)
+    try{
+      const res = await fetch(`${BACKEND}/api/onboarding`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          company: form.company,
+          url: form.url,
+          hours: form.hours || undefined,
+          jobs: form.jobs || undefined,
+          questions: form.questions || undefined,
+          emergency: form.emergency || undefined,
+          contact_email: form.contact_email || undefined,
+        })
+      })
+      if(!res.ok) throw new Error('Network error')
+      alert('Danke! Onboarding-Daten gespeichert.')
+    }catch(err){
+      console.error(err)
+      alert('Speichern nicht möglich. Bitte später erneut versuchen.')
+    }finally{
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -22,7 +47,8 @@ export default function Onboarding(){
           <label className="grid gap-1 text-sm"><span>Art der Aufträge</span><input className="px-3 py-2 rounded-lg bg-slate-800 border border-white/10" value={form.jobs} onChange={e=>setForm({...form, jobs:e.target.value})}/></label>
           <label className="grid gap-1 text-sm"><span>Standardfragen, die der Agent stellen soll</span><textarea className="px-3 py-2 rounded-lg bg-slate-800 border border-white/10" rows={4} value={form.questions} onChange={e=>setForm({...form, questions:e.target.value})}/></label>
           <label className="grid gap-1 text-sm"><span>Notfall-Regeln</span><textarea className="px-3 py-2 rounded-lg bg-slate-800 border border-white/10" rows={4} value={form.emergency} onChange={e=>setForm({...form, emergency:e.target.value})}/></label>
-          <button className="mt-2 px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-400">Absenden</button>
+          <label className="grid gap-1 text-sm"><span>Kontakt E-Mail</span><input type="email" className="px-3 py-2 rounded-lg bg-slate-800 border border-white/10" value={form.contact_email} onChange={e=>setForm({...form, contact_email:e.target.value})}/></label>
+          <button disabled={submitting} className="mt-2 px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-400 disabled:opacity-60">{submitting? 'Speichere…' : 'Absenden'}</button>
         </form>
       </main>
       <Footer/>

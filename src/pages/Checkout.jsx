@@ -3,13 +3,41 @@ import Footer from '../components/Footer'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const BACKEND = import.meta.env.VITE_BACKEND_URL || ''
+const PADDLE_URL = import.meta.env.VITE_PADDLE_CHECKOUT_URL || ''
+
 export default function Checkout(){
-  const [form, setForm] = useState({plan:'starter', agents:1, needDemo:false})
+  const [form, setForm] = useState({plan:'starter', agents:1, needDemo:false, email:'', company:''})
+  const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
 
-  function onSubmit(e){
+  async function onSubmit(e){
     e.preventDefault()
-    navigate('/danke-kauf')
+    setSubmitting(true)
+    try{
+      const res = await fetch(`${BACKEND}/api/checkout`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          plan: form.plan,
+          agents: form.agents,
+          needDemo: form.needDemo,
+          email: form.email || undefined,
+          company: form.company || undefined
+        })
+      })
+      if(!res.ok) throw new Error('Network error')
+      if(PADDLE_URL){
+        window.location.href = PADDLE_URL
+      } else {
+        navigate('/danke-kauf')
+      }
+    }catch(err){
+      console.error(err)
+      alert('Kaufanfrage konnte nicht gesendet werden. Bitte später erneut versuchen.')
+    }finally{
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -35,8 +63,13 @@ export default function Checkout(){
             <input type="checkbox" checked={form.needDemo} onChange={e=>setForm({...form, needDemo:e.target.checked})} />
             <span>Ich möchte vorab eine Demo & Beratung (empfohlen bei Pro/Enterprise)</span>
           </label>
-          <button className="mt-2 px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-400 w-full">Zur Bestätigung</button>
-          <p className="text-xs text-slate-400">Zahlungsabwicklung folgt separat (externer Provider). Nach dem Kauf kontaktieren wir Sie für das Onboarding.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label className="grid gap-1 text-sm"><span>Geschäftliche E-Mail</span><input type="email" className="px-3 py-2 rounded-lg bg-slate-800 border border-white/10" value={form.email} onChange={e=>setForm({...form, email:e.target.value})}/></label>
+            <label className="grid gap-1 text-sm"><span>Unternehmen</span><input className="px-3 py-2 rounded-lg bg-slate-800 border border-white/10" value={form.company} onChange={e=>setForm({...form, company:e.target.value})}/></label>
+          </div>
+          <button disabled={submitting} className="mt-2 px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-400 w-full disabled:opacity-60">{submitting? 'Weiter…' : (PADDLE_URL ? 'Zur Zahlung mit Paddle' : 'Zur Bestätigung')}</button>
+          {!PADDLE_URL && <p className="text-xs text-slate-400">Zahlungsabwicklung über Paddle – hinterlegen Sie VITE_PADDLE_CHECKOUT_URL, um den Checkout zu aktivieren.</p>}
+          <p className="text-xs text-slate-400">Zusatzkosten für Telefonie/TTS fallen separat bei Twilio/ElevenLabs an.</p>
         </form>
       </main>
       <Footer/>
